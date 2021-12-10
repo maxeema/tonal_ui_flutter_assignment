@@ -18,7 +18,7 @@ class MetricsWidget extends StatelessWidget {
 
   MetricsWidget({required String label, required int weight, double? preferredSize, Key? key})
       : assert(preferredSize == null || preferredSize > 0),
-        assert(weight >= minWeightValue || weight <= maxWeightValue),
+        assert(weight >= minWeightValue && weight <= maxWeightValue),
         _label = label,
         _weight = weight.clamp(minWeightValue, maxWeightValue),
         _preferredSize = preferredSize,
