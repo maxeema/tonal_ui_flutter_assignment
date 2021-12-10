@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -44,6 +46,8 @@ class _MetricsWidgetPreviewState extends State<MetricsWidgetPreview> {
   var _weightValue = _defaultWeight;
   var _sizeFactor = 1.0;
 
+  String? _weightInputError;
+
   @override
   void initState() {
     super.initState();
@@ -59,8 +63,9 @@ class _MetricsWidgetPreviewState extends State<MetricsWidgetPreview> {
     });
     _weightTextController.addListener(() {
       final newWeight = _weightTextController.text.trim();
-      if (newWeight.isNotEmpty) {
-        final parsedValue = int.tryParse(newWeight) ?? 0;
+      final parsedValue = int.tryParse(newWeight) ?? 0;
+      final clampedValue = parsedValue.clampWeight();
+      if (clampedValue == parsedValue) {
         setState(() => _weightValue = parsedValue);
       }
     });
@@ -102,26 +107,60 @@ class _MetricsWidgetPreviewState extends State<MetricsWidgetPreview> {
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Expanded(
                       child: TextField(
                         controller: _labelTextController,
                         keyboardType: TextInputType.text,
-                        textAlign: TextAlign.center,
+                        textAlign: TextAlign.start,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                         decoration: const InputDecoration(
-                          hintText: 'Label',
+                          label: Text('Label'),
                         ),
                       ),
                     ),
                     const VerticalDivider(),
                     SizedBox(
-                      width: 100,
+                      width: 50,
                       child: TextField(
                         controller: _weightTextController,
                         keyboardType: TextInputType.number,
                         textAlign: TextAlign.center,
-                        decoration: const InputDecoration(
-                          hintText: 'Weight',
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                          LengthLimitingTextInputFormatter(3),
+                          TextInputFormatter.withFunction((oldValue, newValue) {
+                            var newValueText = newValue.text;
+                            while (newValueText.length > 1 && newValueText.startsWith('0')) {
+                              newValueText = newValueText.replaceFirst('0', '');
+                            }
+                            return newValue.copyWith(
+                                text: newValueText,
+                                selection: TextSelection.collapsed(
+                                    offset: min(newValueText.length, newValue.selection.baseOffset)));
+                          }),
+                          TextInputFormatter.withFunction((oldValue, newValue) {
+                            _weightInputError = null;
+                            if (newValue.text.isNotEmpty) {
+                              final newValueInt = int.tryParse(newValue.text) ?? -1;
+                              final newValueIntClamped = newValueInt.clampWeight();
+                              if (newValueInt != newValueIntClamped) {
+                                setState(() {
+                                  _weightInputError =
+                                      '${MetricsWidget.minWeightValue} - ${MetricsWidget.maxWeightValue}';
+                                });
+                                // return newValue;
+                              }
+                            }
+                            return newValue;
+                            // return newValue.copyWith(text: '$newValueInt');
+                          })
+                        ],
+                        decoration: InputDecoration(
+                          label: const Text(' '),
+                          errorText: _weightInputError,
                         ),
                       ),
                     ),
@@ -175,4 +214,21 @@ class _MetricsWidgetPreviewState extends State<MetricsWidgetPreview> {
       ],
     );
   }
+
+  void tryIncrementWeight(int value) {
+    final parsed = int.tryParse(_weightTextController.text) ?? -1;
+    final clamped = parsed.clampWeight();
+    if (parsed == clamped) {
+      final newValue = parsed + value;
+      final newClamped = newValue.clampWeight();
+      if (newValue == newClamped) {
+        _weightTextController.text = '$newValue';
+      }
+    }
+  }
+}
+
+// A handy extension for clamping the 'weight' value
+extension on int {
+  int clampWeight() => clamp(MetricsWidget.minWeightValue, MetricsWidget.maxWeightValue) as int;
 }
