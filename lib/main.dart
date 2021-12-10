@@ -121,6 +121,12 @@ class _MetricsWidgetPreviewState extends State<MetricsWidgetPreview> {
                       ),
                     ),
                     const VerticalDivider(),
+                    IconButton(
+                      icon: const Icon(Icons.remove),
+                      color: Theme.of(context).primaryColor,
+                      iconSize: 28,
+                      onPressed: () => _tryIncrementWeight(-1),
+                    ),
                     SizedBox(
                       width: 50,
                       child: TextField(
@@ -149,7 +155,7 @@ class _MetricsWidgetPreviewState extends State<MetricsWidgetPreview> {
                               if (newValueInt != newValueIntClamped) {
                                 setState(() {
                                   _weightInputError =
-                                      '${MetricsWidget.minWeightValue} - ${MetricsWidget.maxWeightValue}';
+                                  '${MetricsWidget.minWeightValue} - ${MetricsWidget.maxWeightValue}';
                                 });
                                 // return newValue;
                               }
@@ -163,6 +169,15 @@ class _MetricsWidgetPreviewState extends State<MetricsWidgetPreview> {
                           errorText: _weightInputError,
                         ),
                       ),
+                    ),
+                    IconButton(
+                      icon: const Icon(
+                        Icons.add,
+                      ),
+                      color: Theme.of(context).primaryColor,
+                      padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 18.0),
+                      iconSize: 28,
+                      onPressed: () => _tryIncrementWeight(1),
                     ),
                   ],
                 ),
@@ -215,7 +230,7 @@ class _MetricsWidgetPreviewState extends State<MetricsWidgetPreview> {
     );
   }
 
-  void tryIncrementWeight(int value) {
+  void _tryIncrementWeight(int value) {
     final parsed = int.tryParse(_weightTextController.text) ?? -1;
     final clamped = parsed.clampWeight();
     if (parsed == clamped) {
