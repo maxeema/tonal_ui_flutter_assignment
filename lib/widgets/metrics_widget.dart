@@ -89,8 +89,9 @@ class MetricsWidget extends StatelessWidget {
                         _label,
                         key: Key(_label),
                         textAlign: TextAlign.center,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                        softWrap: false,
+                        overflow: TextOverflow.fade,
                         style: styles.labelTextStyle.apply(
                           fontSizeFactor: scaleFactor,
                         ),
