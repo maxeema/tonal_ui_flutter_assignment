@@ -115,15 +115,12 @@ class _MetricsWidgetPreviewState extends State<MetricsWidgetPreview> {
                         keyboardType: TextInputType.text,
                         textAlign: TextAlign.start,
                         style: const TextStyle(fontWeight: FontWeight.bold),
-                        decoration: const InputDecoration(
-                          label: Text('Label'),
-                        ),
                       ),
                     ),
                     const VerticalDivider(),
                     IconButton(
                       icon: const Icon(Icons.remove),
-                      color: Theme.of(context).primaryColor,
+                      color: Theme.of(context).buttonTheme.colorScheme?.primary,
                       iconSize: 28,
                       onPressed: () => _tryIncrementWeight(-1),
                     ),
@@ -155,26 +152,21 @@ class _MetricsWidgetPreviewState extends State<MetricsWidgetPreview> {
                               if (newValueInt != newValueIntClamped) {
                                 setState(() {
                                   _weightInputError =
-                                  '${MetricsWidget.minWeightValue} - ${MetricsWidget.maxWeightValue}';
+                                      '${MetricsWidget.minWeightValue} - ${MetricsWidget.maxWeightValue}';
                                 });
-                                // return newValue;
                               }
                             }
                             return newValue;
-                            // return newValue.copyWith(text: '$newValueInt');
                           })
                         ],
                         decoration: InputDecoration(
-                          label: const Text(' '),
                           errorText: _weightInputError,
                         ),
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(
-                        Icons.add,
-                      ),
-                      color: Theme.of(context).primaryColor,
+                      icon: const Icon(Icons.add),
+                      color: Theme.of(context).buttonTheme.colorScheme?.primary,
                       padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 18.0),
                       iconSize: 28,
                       onPressed: () => _tryIncrementWeight(1),
