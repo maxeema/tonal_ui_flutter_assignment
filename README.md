@@ -2,8 +2,11 @@
 
 Modern UI engineering is all about components. When we build components to be reusable, we enable faster iteration and higher consistency across the application and the company.
 
+
+Available online https://maxeema.github.io/tonal_ui_flutter_assignment/index.html
+
 ![Screenshot](screenshot.png)
-*Completed assignment - the MetricsWidget preview*
+*Completed assignment with MetricsWidget demo app.*
 
 ## Requirements
 
